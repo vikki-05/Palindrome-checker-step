@@ -1,0 +1,257 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+import java.util.Stack;
+
+public class UseCase7PalindromeCheckerApp {
+    public static void main(String[] args) {
+        String appName = "Palindrome Checker App";
+        String appVersion = "v7.0";
+
+        System.out.println("========================================");
+        System.out.println("Welcome to " + appName);
+        System.out.println("Application Name    : " + appName);
+        System.out.println("Application Version : " + appVersion);
+        System.out.println("========================================");
+        System.out.println("Type text to check palindrome (or type EXIT).");
+        System.out.println();
+
+        // UC1 to UC7 examples
+        runUC1Example();
+        runUC2Example();
+        runUC3Example();
+        runUC4Example();
+        runUC5Example();
+        runUC6Example();
+        runUC7Example();
+
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println();
+            System.out.println("Enter a string to check palindrome (or type EXIT):");
+            if (!scanner.hasNextLine()) {
+                System.out.println("Input stream closed. Exiting app.");
+                break;
+            }
+
+            String input = sanitizeInput(scanner.nextLine());
+            if ("EXIT".equalsIgnoreCase(input)) {
+                break;
+            }
+
+            if (input.trim().isEmpty()) {
+                System.out.println("Input is empty. Please enter valid text.");
+                continue;
+            }
+
+            boolean uc1Result = isPalindromeStrict(input);
+            boolean uc2Result = isPalindromeIgnoreCaseAndNonAlnum(input);
+            boolean uc3Result = isPalindromeUsingReverse(input);
+            boolean uc4Result = isPalindromeUsingCharArray(input);
+            boolean stackResult = isPalindromeUsingStack(input);
+            boolean uc6Result = isPalindromeUsingQueueAndStack(input);
+            boolean uc7Result = isPalindromeUsingDeque(input);
+
+            System.out.println("UC1 - Strict palindrome check                 : " + uc1Result);
+            System.out.println("UC2 - Ignore case/symbols/spaces             : " + uc2Result);
+            System.out.println("UC3 - Reverse method check                    : " + uc3Result);
+            System.out.println("UC4 - Char array two-pointer check            : " + uc4Result);
+            System.out.println("UC5 - Stack-based palindrome check            : " + stackResult);
+            System.out.println("UC6 - Queue + Stack check                     : " + uc6Result);
+            System.out.println("UC7 - Deque optimized check                   : " + uc7Result);
+        }
+
+        scanner.close();
+        System.out.println("Exiting Palindrome Checker App.");
+    }
+
+    // UC1: Basic palindrome check with fixed input
+    static void runUC1Example() {
+        String input = "abba";
+        boolean result = isPalindromeStrict(input);
+
+        System.out.println("UC1 - Basic Palindrome Check");
+        System.out.println("Input String : " + input);
+        System.out.println("Result       : " + (result ? "Palindrome" : "Not a palindrome"));
+        System.out.println();
+    }
+
+    // UC2: Ignore case, spaces and symbols
+    static void runUC2Example() {
+        String input = "A man, a plan, a canal: Panama";
+        boolean result = isPalindromeIgnoreCaseAndNonAlnum(input);
+
+        System.out.println("UC2 - Normalized Palindrome Check");
+        System.out.println("Input String : " + input);
+        System.out.println("Result       : " + (result ? "Palindrome" : "Not a palindrome"));
+        System.out.println();
+    }
+
+    // UC3: Palindrome check using manual reverse
+    static void runUC3Example() {
+        String input = "racecar";
+        boolean result = isPalindromeUsingReverse(input);
+
+        System.out.println("UC3 - Palindrome Check Using String Reverse");
+        System.out.println("Input String : " + input);
+        System.out.println("Result       : " + (result ? "Palindrome" : "Not a palindrome"));
+        System.out.println();
+    }
+
+    // UC4: Palindrome check using char[] and two pointers
+    static void runUC4Example() {
+        String input = "level";
+        boolean result = isPalindromeUsingCharArray(input);
+
+        System.out.println("UC4 - Character Array Based Palindrome Check");
+        System.out.println("Input String : " + input);
+        System.out.println("Result       : " + (result ? "Palindrome" : "Not a palindrome"));
+        System.out.println();
+    }
+
+    // UC5: Stack-Based Palindrome Checker
+    static void runUC5Example() {
+        String input = "madam";
+        boolean result = isPalindromeUsingStack(input);
+
+        System.out.println("UC5 - Stack-Based Palindrome Checker");
+        System.out.println("Input String : " + input);
+        System.out.println("Result       : " + (result ? "Palindrome" : "Not a palindrome"));
+        System.out.println();
+    }
+
+    // UC6: Queue + Stack Based Palindrome Check
+    static void runUC6Example() {
+        String input = "radar";
+        boolean result = isPalindromeUsingQueueAndStack(input);
+
+        System.out.println("UC6 - Queue + Stack Based Palindrome Check");
+        System.out.println("Input String : " + input);
+        System.out.println("Result       : " + (result ? "Palindrome" : "Not a palindrome"));
+        System.out.println();
+    }
+
+    // UC7: Deque-Based Optimized Palindrome Checker
+    static void runUC7Example() {
+        String input = "refer";
+        boolean result = isPalindromeUsingDeque(input);
+
+        System.out.println("UC7 - Deque-Based Optimized Palindrome Checker");
+        System.out.println("Input String : " + input);
+        System.out.println("Result       : " + (result ? "Palindrome" : "Not a palindrome"));
+        System.out.println();
+    }
+
+    static boolean isPalindromeStrict(String text) {
+        int left = 0;
+        int right = text.length() - 1;
+
+        while (left < right) {
+            if (text.charAt(left) != text.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    static boolean isPalindromeIgnoreCaseAndNonAlnum(String text) {
+        String cleaned = text.replaceAll("[^A-Za-z0-9]", "").toLowerCase();
+        return isPalindromeStrict(cleaned);
+    }
+
+    static String reverseText(String text) {
+        String reversed = "";
+        for (int i = text.length() - 1; i >= 0; i--) {
+            reversed = reversed + text.charAt(i);
+        }
+        return reversed;
+    }
+
+    static boolean isPalindromeUsingReverse(String text) {
+        String reversed = reverseText(text);
+        return text.equals(reversed);
+    }
+
+    static boolean isPalindromeUsingCharArray(String text) {
+        char[] characters = text.toCharArray();
+        int left = 0;
+        int right = characters.length - 1;
+
+        while (left < right) {
+            if (characters[left] != characters[right]) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    // Push all characters to stack, then pop for reverse-order comparison.
+    static boolean isPalindromeUsingStack(String text) {
+        Stack<Character> stack = new Stack<>();
+
+        for (int i = 0; i < text.length(); i++) {
+            stack.push(text.charAt(i));
+        }
+
+        for (int i = 0; i < text.length(); i++) {
+            char popped = stack.pop();
+            if (text.charAt(i) != popped) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Enqueue characters (FIFO), push same characters (LIFO), then compare dequeue vs pop.
+    static boolean isPalindromeUsingQueueAndStack(String text) {
+        Queue<Character> queue = new LinkedList<>();
+        Stack<Character> stack = new Stack<>();
+
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            queue.offer(ch);
+            stack.push(ch);
+        }
+
+        while (!queue.isEmpty()) {
+            char fromQueue = queue.poll();
+            char fromStack = stack.pop();
+            if (fromQueue != fromStack) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Insert into deque, compare/remove front and rear until middle is reached.
+    static boolean isPalindromeUsingDeque(String text) {
+        Deque<Character> deque = new ArrayDeque<>();
+
+        for (int i = 0; i < text.length(); i++) {
+            deque.addLast(text.charAt(i));
+        }
+
+        while (deque.size() > 1) {
+            char front = deque.removeFirst();
+            char rear = deque.removeLast();
+            if (front != rear) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Removes control artifacts that can appear in piped console input on Windows.
+    static String sanitizeInput(String text) {
+        return text.replace("\uFEFF", "").replace("\r", "");
+    }
+}
