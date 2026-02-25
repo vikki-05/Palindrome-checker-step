@@ -1,12 +1,14 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
 
-public class UseCase6PalindromeCheckerApp {
+public class PalindromeCheckerApp {
     public static void main(String[] args) {
         String appName = "Palindrome Checker App";
-        String appVersion = "v6.0";
+        String appVersion = "v7.0";
 
         System.out.println("========================================");
         System.out.println("Welcome to " + appName);
@@ -16,13 +18,14 @@ public class UseCase6PalindromeCheckerApp {
         System.out.println("Type text to check palindrome (or type EXIT).");
         System.out.println();
 
-        // UC1 to UC6 examples
+        // UC1 to UC7 examples
         runUC1Example();
         runUC2Example();
         runUC3Example();
         runUC4Example();
         runUC5Example();
         runUC6Example();
+        runUC7Example();
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -49,6 +52,7 @@ public class UseCase6PalindromeCheckerApp {
             boolean uc4Result = isPalindromeUsingCharArray(input);
             boolean stackResult = isPalindromeUsingStack(input);
             boolean uc6Result = isPalindromeUsingQueueAndStack(input);
+            boolean uc7Result = isPalindromeUsingDeque(input);
 
             System.out.println("UC1 - Strict palindrome check                 : " + uc1Result);
             System.out.println("UC2 - Ignore case/symbols/spaces             : " + uc2Result);
@@ -56,6 +60,7 @@ public class UseCase6PalindromeCheckerApp {
             System.out.println("UC4 - Char array two-pointer check            : " + uc4Result);
             System.out.println("UC5 - Stack-based palindrome check            : " + stackResult);
             System.out.println("UC6 - Queue + Stack check                     : " + uc6Result);
+            System.out.println("UC7 - Deque optimized check                   : " + uc7Result);
         }
 
         scanner.close();
@@ -123,6 +128,17 @@ public class UseCase6PalindromeCheckerApp {
         boolean result = isPalindromeUsingQueueAndStack(input);
 
         System.out.println("UC6 - Queue + Stack Based Palindrome Check");
+        System.out.println("Input String : " + input);
+        System.out.println("Result       : " + (result ? "Palindrome" : "Not a palindrome"));
+        System.out.println();
+    }
+
+    // UC7: Deque-Based Optimized Palindrome Checker
+    static void runUC7Example() {
+        String input = "refer";
+        boolean result = isPalindromeUsingDeque(input);
+
+        System.out.println("UC7 - Deque-Based Optimized Palindrome Checker");
         System.out.println("Input String : " + input);
         System.out.println("Result       : " + (result ? "Palindrome" : "Not a palindrome"));
         System.out.println();
@@ -208,6 +224,25 @@ public class UseCase6PalindromeCheckerApp {
             char fromQueue = queue.poll();
             char fromStack = stack.pop();
             if (fromQueue != fromStack) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Insert into deque, compare/remove front and rear until middle is reached.
+    static boolean isPalindromeUsingDeque(String text) {
+        Deque<Character> deque = new ArrayDeque<>();
+
+        for (int i = 0; i < text.length(); i++) {
+            deque.addLast(text.charAt(i));
+        }
+
+        while (deque.size() > 1) {
+            char front = deque.removeFirst();
+            char rear = deque.removeLast();
+            if (front != rear) {
                 return false;
             }
         }
